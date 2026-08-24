@@ -2,13 +2,13 @@ CC = clang
 CFLAGS = -Wall -Wextra -Wpedantic
 NCURSES = $(shell pkg-config --cflags --libs ncursesw)
 
-mandlebrot_set: mandlebrot_set.c
-	$(CC) $(CFLAGS) mandlebrot_set.c -o mandlebrot_set $(NCURSES)
+mandelbrot_set: mandelbrot_set.c
+	$(CC) $(CFLAGS) mandelbrot_set.c -o mandelbrot_set $(NCURSES) -lm
 
-run: mandlebrot_set
-	./mandlebrot_set
+run: mandelbrot_set
+	./mandelbrot_set
 
 clean:
-	rm -f mandlebrot_set
+	rm -f mandelbrot_set
 
 .PHONY: run clean
