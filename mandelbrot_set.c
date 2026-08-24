@@ -58,6 +58,16 @@ int main(void)
 		return -1;
 	}
 
+	if (has_colors()) {
+		start_color();
+		use_default_colors(); // keeps terminal background color
+
+		// gradient pairs
+		init_pair(1, COLOR_BLUE, COLOR_BLACK);
+		init_pair(2, COLOR_CYAN, COLOR_BLACK);
+		init_pair(3, COLOR_WHITE, COLOR_BLACK);
+	}
+
 	cbreak();
 	noecho();
 	keypad(stdscr, true);
@@ -223,7 +233,25 @@ static void draw_mandelbrot(const struct viewer *viewer)
 			char pixel = iteration_character(
 			    iteration, viewer->max_iterations);
 
+			int color_pair = 0;
+			if (iteration < viewer->max_iterations) {
+				// Group iterations into bands of 8 for a smooth
+				// ripple effect
+				int band = (iteration / 8) % 3;
+				if (band == 0)
+					color_pair = 1; // Deep Blue
+				else if (band == 1)
+					color_pair = 2; // Bright Cyan
+				else
+					color_pair = 3; // White highlight
+			}
+
+			// Apply color, draw pixel, remove color
+			if (color_pair > 0)
+				attron(COLOR_PAIR(color_pair));
 			mvaddch(screen_y, screen_x, pixel);
+			if (color_pair > 0)
+				attroff(COLOR_PAIR(color_pair));
 		}
 	}
 
