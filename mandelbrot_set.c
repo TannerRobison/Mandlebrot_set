@@ -62,10 +62,10 @@ int main(void)
 		start_color();
 		use_default_colors(); // keeps terminal background color
 
-		// gradient pairs
-		init_pair(1, COLOR_BLUE, COLOR_BLACK);
-		init_pair(2, COLOR_CYAN, COLOR_BLACK);
-		init_pair(3, COLOR_WHITE, COLOR_BLACK);
+		// Galactic Void Theme (Pairs 14, 15, & 16)
+		init_pair(1, COLOR_CYAN, COLOR_BLACK);
+		init_pair(2, COLOR_BLUE, COLOR_BLACK);
+		init_pair(3, COLOR_MAGENTA, COLOR_BLACK);
 	}
 
 	cbreak();
@@ -234,24 +234,37 @@ static void draw_mandelbrot(const struct viewer *viewer)
 			    iteration, viewer->max_iterations);
 
 			int color_pair = 0;
+			bool is_bold = false;
 			if (iteration < viewer->max_iterations) {
 				// Group iterations into bands of 8 for a smooth
 				// ripple effect
 				int band = (iteration / 8) % 3;
-				if (band == 0)
+				if (band == 0) {
 					color_pair = 1; // Deep Blue
-				else if (band == 1)
+					is_bold = true;
+				} else if (band == 1) {
 					color_pair = 2; // Bright Cyan
-				else
+				} else if (band == 2) {
 					color_pair = 3; // White highlight
+				}
 			}
 
 			// Apply color, draw pixel, remove color
-			if (color_pair > 0)
-				attron(COLOR_PAIR(color_pair));
+			if (color_pair > 0) {
+				attron(COLOR_PAIR(color_pair) | A_BOLD);
+				if (is_bold) {
+					attron(A_BOLD);
+				}
+			}
+
 			mvaddch(screen_y, screen_x, pixel);
-			if (color_pair > 0)
-				attroff(COLOR_PAIR(color_pair));
+
+			if (color_pair > 0) {
+				attroff(COLOR_PAIR(color_pair) | A_BOLD);
+				if (is_bold) {
+					attroff(A_BOLD);
+				}
+			}
 		}
 	}
 
